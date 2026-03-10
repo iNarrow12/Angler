@@ -13,7 +13,7 @@
 
 ## `$ Overview`
 
-Angler is a real-time phishing framework designed for **authorized penetration testing and security research**. It simulates a multi-step Google login flow, captures credentials live via WebSockets, and allows the operator to push custom 2FA challenge screens to the target in real time.
+Angler is a real-time Google phishing framework designed for **authorized penetration testing and security research**. It simulates a multi-step Google login flow, captures credentials live via WebSockets, and allows the operator to push custom 2FA challenge screens to the target in real time.
 
 > **This tool is strictly for educational purposes and authorized testing only. Unauthorized use is illegal.**
 
