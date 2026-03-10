@@ -95,7 +95,9 @@ python server.py --port 8080
 | `http://localhost:5800/` | Victim-facing phishing page |
 | `http://localhost:5800/admin` | Admin control panel |
 
-Admin credentials: `admin / admin`
+Admin credentials: 
+UserName : `admin`
+Password : `admin`
 
 ---
 
