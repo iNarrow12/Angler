@@ -23,7 +23,7 @@ Angler is a real-time phishing framework designed for **authorized penetration t
 
 <div align="center">
 
-| ![Step 1](https://github.com/iNarrow12/Angler/blob/main/src/Screenshot%202026-03-09%20230211.png)
+| ![Step 1](https://github.com/iNarrow12/Angler/blob/main/src/image.png)
 
 </div>
 
