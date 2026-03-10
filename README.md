@@ -1,6 +1,6 @@
 <div align="center">
 
-![header](https://capsule-render.vercel.app/api?type=waving&height=300&color=gradient&text=Angler&desc=Real-Time%20Credential%20Capture%20%26%202FA%20Bypass%20Framework&descAlignY=52&fontAlignY=40)
+![header](https://capsule-render.vercel.app/api?type=waving&height=300&color=gradient&text=Angler&fontAlignY=35&fontColor=ffff&desc=A%20Real%20Time%20Phishing%20Tool%20For%20Red%20Teammers)
 
 ![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-SocketIO-000000?style=for-the-badge&logo=flask&logoColor=white)
