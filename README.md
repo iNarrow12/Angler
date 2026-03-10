@@ -1,6 +1,6 @@
 <div align="center">
 
-![header](https://capsule-render.vercel.app/api?type=waving&height=300&color=gradient&text=Angler&fontAlignY=35&fontColor=ffff&desc=A%20Real%20Time%20Phishing%20Tool%20For%20Red%20Teammers)
+![header](https://capsule-render.vercel.app/api?type=waving&height=300&color=gradient&text=Angler&fontAlignY=35&fontColor=ffff&desc=%20Real-Time%20Phis%20hing%20Framework%20Designed%20For%20Authorized%20Penetratio)
 
 ![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-SocketIO-000000?style=for-the-badge&logo=flask&logoColor=white)
