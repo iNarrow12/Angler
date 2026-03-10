@@ -19,6 +19,21 @@ Angler is a real-time phishing framework designed for **authorized penetration t
 
 ---
 
+## `$ Screenshots`
+
+<div align="center">
+
+| Victim Flow | Admin Panel |
+|-------------|-------------|
+| ![Step 1](src/1.png) | ![Admin - Waiting](src/2.png) |
+| ![Step 2](src/3.png) | ![Admin - Captured](src/4.png) |
+| ![Processing](src/5.png) | ![Admin - 2FA Selected](src/6.png) |
+| ![2FA SMS](src/7.png) | ![Admin - Code Received](src/8.png) |
+
+</div>
+
+---
+
 ## `$ Tree Overview`
 
 ```
